@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RestController
@@ -65,12 +66,18 @@ public class OrderController {
 
 
         private record OrderInDetail(long id, LocalDate ordered, LocalDate required
-                , String customerName, String countryName, BigDecimal value, Set<OrderDetail> orderDetails) {
+                , String customerName, String countryName, BigDecimal value, Set<OrderDetailsBeknopt> orderDetails) {
             OrderInDetail(Order order) {
                 this(order.getId(), order.getOrdered(), order.getRequired(),
                         order.getCustomer().getName(), order.getCustomer().getCountry().getName(),
-                        order.getTotalValue(), order.getOrderDetails());
+                        order.getTotalValue(), order.getOrderDetails().stream().map(orderDetail -> new OrderDetailsBeknopt(orderDetail)).collect(Collectors.toSet()));
             }
+        }
+
+        private record OrderDetailsBeknopt(int ordered, BigDecimal priceEach, BigDecimal value, String productName) {
+        OrderDetailsBeknopt(OrderDetail orderDetail) {
+            this(orderDetail.getOrdered(), orderDetail.getPriceEach(), orderDetail.getValue(), orderDetail.getProduct().getName());
+        }
         }
 
         private record OrderBeknopt(long id, LocalDate ordered, LocalDate required

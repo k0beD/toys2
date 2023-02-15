@@ -21,9 +21,6 @@ public class Product {
     private int inOrder;
     private BigDecimal price;
 
- @ElementCollection
-@CollectionTable(name = "orderdetails")
-   private Set<OrderDetail> orderDetails = new LinkedHashSet<OrderDetail>();
 
     @Version
     private long version;
@@ -59,11 +56,6 @@ public class Product {
         return price;
     }
 
-
-
-    public Set<OrderDetail> getOrderDetails() {
-        return Collections.unmodifiableSet(orderDetails);
-   }
 
     public long getVersion() {
         return version;

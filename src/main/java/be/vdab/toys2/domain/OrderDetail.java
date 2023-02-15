@@ -14,6 +14,8 @@ public class OrderDetail {
     @JoinColumn(name = "productId")
     private Product product;
 
+    protected OrderDetail(){}
+
 
 
     public BigDecimal getValue() {
