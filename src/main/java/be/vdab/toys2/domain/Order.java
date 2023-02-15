@@ -25,7 +25,8 @@ public class Order {
     private Customer customer;
 
     @ElementCollection
-    @CollectionTable(name = "orderdetails")
+    @CollectionTable(name = "orderdetails", joinColumns = @JoinColumn(name= "orderId"))
+    @Column(name="orderdetails")
     private Set<OrderDetail> orderDetails = new LinkedHashSet<OrderDetail>();
 
     @Enumerated(EnumType.STRING)
@@ -80,11 +81,12 @@ public class Order {
     }
 
     public void ship() {
-        if (status.equals(Status.SHIPPED)) {
+        if (status == Status.SHIPPED) {
             throw new OrderShippedException();
         } else {
             status = Status.SHIPPED;
             shipped = LocalDate.now();
+
         }
     }
 

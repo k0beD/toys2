@@ -10,12 +10,10 @@ public class OrderDetail {
 
     private int ordered;
     private BigDecimal priceEach;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "productId")
     private Product product;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orderId")
-    private Order order;
+
 
 
     public BigDecimal getValue() {
@@ -34,19 +32,17 @@ public class OrderDetail {
         return product;
     }
 
-    public Order getOrder() {
-        return order;
-    }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof OrderDetail that)) return false;
-        return product.equals(that.product) && order.equals(that.order);
+        return product.equals(that.product);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(product, order);
+        return Objects.hash(product);
     }
 }

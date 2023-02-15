@@ -36,50 +36,48 @@ public class OrderController {
 
     @GetMapping("{id}")
     OrderInDetail findById(@PathVariable long id) {
-        return orderService.findById(id).map(OrderInDetail::new)
+        return orderService.findById(id).map(order -> new OrderInDetail(order))
                 .orElseThrow(OrderNietGevondenException::new);
     }
 
     @PostMapping("{orderNummer}/shippings")
     void ship(@PathVariable long orderNummer) {
 
+        var orderDetails = orderService.findAndLockById(orderNummer).getOrderDetails();
+        for (var orderDetail : orderDetails) {
+            var aantal = orderDetail.getOrdered();
+            var productId = orderDetail.getProduct().getId();
 
-        try {
-            var orderDetails = orderService.findAndLockById(orderNummer).getOrderDetails();
-            for (var orderDetail : orderDetails) {
-
-                var aantal = orderDetail.getOrdered();
-                var productId = orderDetail.getProduct().getId();
-
-                try {
-                    productService.ship(productId, aantal);
-                } catch (ObjectOptimisticLockingFailureException ex) {
-                    throw new ProductDoorAndereGebruikerGewijzigdException();
-                }
-                orderService.ship(orderNummer);
+            try {
+                productService.ship(productId, aantal);
+            } catch (ObjectOptimisticLockingFailureException ex) {
+                throw new ProductDoorAndereGebruikerGewijzigdException();
             }
+
+        }
+        try {
+            orderService.ship(orderNummer);
+
         } catch (ObjectOptimisticLockingFailureException ex) {
             throw new OrderDoorAndereGebruikerGewijzigdException();
         }
-
-
     }
 
 
-    private record OrderInDetail(long id, LocalDate ordered, LocalDate required
-            , String customerName, String countryName, BigDecimal value, Set<OrderDetail> orderDetails) {
-        OrderInDetail(Order order) {
-            this(order.getId(), order.getOrdered(), order.getRequired(),
-                    order.getCustomer().getName(), order.getCustomer().getCountry().getName(),
-                    order.getTotalValue(), order.getOrderDetails());
+        private record OrderInDetail(long id, LocalDate ordered, LocalDate required
+                , String customerName, String countryName, BigDecimal value, Set<OrderDetail> orderDetails) {
+            OrderInDetail(Order order) {
+                this(order.getId(), order.getOrdered(), order.getRequired(),
+                        order.getCustomer().getName(), order.getCustomer().getCountry().getName(),
+                        order.getTotalValue(), order.getOrderDetails());
+            }
+        }
+
+        private record OrderBeknopt(long id, LocalDate ordered, LocalDate required
+                , String customerName, Status status) {
+            OrderBeknopt(Order order) {
+                this(order.getId(), order.getOrdered(), order.getRequired()
+                        , order.getCustomer().getName(), order.getStatus());
+            }
         }
     }
-
-    private record OrderBeknopt(long id, LocalDate ordered, LocalDate required
-            , String customerName, Status status) {
-        OrderBeknopt(Order order) {
-            this(order.getId(), order.getOrdered(), order.getRequired()
-                    , order.getCustomer().getName(), order.getStatus());
-        }
-    }
-}

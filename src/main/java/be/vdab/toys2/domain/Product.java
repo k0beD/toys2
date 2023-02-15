@@ -20,9 +20,6 @@ public class Product {
     private int inStock;
     private int inOrder;
     private BigDecimal price;
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "productLineId")
-    private ProductLine productLine;
 
  @ElementCollection
 @CollectionTable(name = "orderdetails")
@@ -62,13 +59,11 @@ public class Product {
         return price;
     }
 
-    public ProductLine getProductLine() {
-        return productLine;
-    }
 
-//    public Set<OrderDetail> getOrderDetails() {
-//        return Collections.unmodifiableSet(orderDetails);
-//    }
+
+    public Set<OrderDetail> getOrderDetails() {
+        return Collections.unmodifiableSet(orderDetails);
+   }
 
     public long getVersion() {
         return version;
