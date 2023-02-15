@@ -16,8 +16,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @EntityGraph(attributePaths = "customer")
     List<Order> findAllByStatusNotInOrderById(List<Status> statusSet);
-    @Query("select o from Order o join fetch o.customer")
-    Optional<Order> findById(long id);
 
 
     @Lock(LockModeType.OPTIMISTIC)

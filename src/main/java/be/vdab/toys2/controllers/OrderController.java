@@ -56,6 +56,7 @@ public class OrderController {
                 } catch (ObjectOptimisticLockingFailureException ex) {
                     throw new ProductDoorAndereGebruikerGewijzigdException();
                 }
+                orderService.ship(orderNummer);
             }
         } catch (ObjectOptimisticLockingFailureException ex) {
             throw new OrderDoorAndereGebruikerGewijzigdException();
