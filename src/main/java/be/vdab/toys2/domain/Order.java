@@ -26,8 +26,8 @@ public class Order {
 
     @ElementCollection
     @CollectionTable(name = "orderdetails", joinColumns = @JoinColumn(name= "orderId"))
-    @Column(name="orderdetails")
     private Set<OrderDetail> orderDetails = new LinkedHashSet<OrderDetail>();
+
 
     @Enumerated(EnumType.STRING)
     private Status status;
